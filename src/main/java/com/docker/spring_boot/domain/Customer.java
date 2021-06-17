@@ -1,12 +1,9 @@
 package com.docker.spring_boot.domain;
 
+import com.docker.spring_boot.util.ConversionUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
@@ -16,6 +13,7 @@ public class Customer implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true)
 	private String email;
 
 	private String password;
@@ -29,6 +27,16 @@ public class Customer implements UserDetails {
 		this.email = email;
 		this.password = password;
 	}
+
+
+	public void changePassword() {
+		this.password = ConversionUtil.encode(this.password);
+	}
+
+	public boolean validForLogin(){
+		return this.password != null && this.email != null;
+	}
+
 
 	public Long getId() {
 		return id;

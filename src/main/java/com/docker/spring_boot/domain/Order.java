@@ -1,11 +1,13 @@
 package com.docker.spring_boot.domain;
 
+import com.docker.spring_boot.enumx.OrderStatus;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "payment_order")
+@Table(name = "orders")
 public class Order {
 
 	@Id
@@ -22,20 +24,29 @@ public class Order {
 
 	private Date orderDate;
 
-	private String status; //create enum
+	@Enumerated(EnumType.STRING)
+	private OrderStatus status;
 
 	private Double totalPrice;
+
+	private Date deleteDate;
+
+	@ManyToOne
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
 
 
 	public Order() {
 	}
 
-	public Order(Long id, List<Product> itens, Date orderDate, String status, Double totalPrice) {
+	public Order(Long id, List<Product> itens, Date orderDate, OrderStatus status, Double totalPrice, Date deleteDate, Customer customer) {
 		this.id = id;
 		this.itens = itens;
 		this.orderDate = orderDate;
 		this.status = status;
 		this.totalPrice = totalPrice;
+		this.deleteDate = deleteDate;
+		this.customer = customer;
 	}
 
 	public Long getId() {
@@ -62,19 +73,52 @@ public class Order {
 		this.orderDate = orderDate;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Double getTotalPrice() {
 		return totalPrice;
 	}
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public Date getDeleteDate() {
+		return deleteDate;
+	}
+
+	public void setDeleteDate(Date deleteDate) {
+		this.deleteDate = deleteDate;
+	}
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+	}
+
+	public void createDraft(){
+		this.status = OrderStatus.DRAFT;
+	}
+
+	public void delete(){
+		this.deleteDate = new Date();
+	}
+
+	public void confirm(){
+		this.orderDate =  new Date();
+		this.status = OrderStatus.CREATED;
+		this.calcTotalPrice();
+	}
+
+	public void calcTotalPrice(){
+		this.totalPrice  = 0.0;
+		for(Product product : this.itens){
+			this.totalPrice += product.getPrice();
+		}
 	}
 }

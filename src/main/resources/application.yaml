@@ -1,1 +1,8 @@
+spring:
+  jpa:
+    open-in-view: true
+  profiles:
+    active: homol
 
+jwt:
+  secret: usersecret

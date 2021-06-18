@@ -107,6 +107,7 @@ public class Order {
 
 	public void delete(){
 		this.deleteDate = new Date();
+		this.status = OrderStatus.DELETED;
 	}
 
 	public void confirm(){

@@ -34,7 +34,7 @@ public class OrderController {
 
 		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		if(orderRepository.existsByCustomerAndOrderDateIsNull(customer)){
+		if(orderRepository.existsByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer)){
 			return ResponseEntity.badRequest().body(new JsonMessage("Não é possivel criar um novo pedido sem excluir ou finalizar o atual"));
 		}
 
@@ -50,7 +50,7 @@ public class OrderController {
 
 		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		Order order = orderRepository.findByCustomerAndOrderDateIsNull(customer);
+		Order order = orderRepository.findByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer);
 		order.confirm();
 		orderRepository.save(order);
 
@@ -63,7 +63,7 @@ public class OrderController {
 
 		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		Order order = orderRepository.findByCustomerAndOrderDateIsNull(customer);
+		Order order = orderRepository.findByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer);
 		order.delete();
 		orderRepository.save(order);
 

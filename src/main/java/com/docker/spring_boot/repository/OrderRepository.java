@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
-	Order findByCustomerAndOrderDateIsNull(Customer customer);
+	Order findByCustomerAndOrderDateIsNullAndDeleteDateIsNull(Customer customer);
 
-	boolean existsByCustomerAndOrderDateIsNull(Customer customer);
+	boolean existsByCustomerAndOrderDateIsNullAndDeleteDateIsNull(Customer customer);
 }

@@ -1,16 +1,26 @@
 plugins {
+	id 'com.github.johnrengelman.shadow' version '7.0.0'
 	id 'org.springframework.boot' version '2.5.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
 
+apply plugin: 'application'
+apply plugin: 'java'
+
 group = 'com.docker'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+mainClassName = 'com.docker.spring_boot.Application'
 
 repositories {
 	mavenCentral()
 }
+
+bootJar {
+	mainClassName = 'com.docker.spring_boot.Application'
+}
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -21,6 +31,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+
+	jar {
+		from {
+			configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+		}
+	}
 }
 
 test {

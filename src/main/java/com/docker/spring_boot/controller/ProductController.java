@@ -1,62 +1,66 @@
 package com.docker.spring_boot.controller;
 
 import com.docker.spring_boot.domain.JsonMessage;
-import com.docker.spring_boot.domain.Product;
-import com.docker.spring_boot.repository.ProductRepository;
+import com.docker.spring_boot.dto.ProductDTO;
+import com.docker.spring_boot.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/product")
 public class ProductController {
 
-	private ProductRepository productRepository;
+	private final ProductService productService;
 
-	public ProductController(ProductRepository productRepository) {
-		this.productRepository = productRepository;
+	public ProductController(ProductService productService) {
+		this.productService = productService;
 	}
-
-	@PostMapping
-	public ResponseEntity<?> create(@RequestBody Product product){
-		product.create();
-		return ResponseEntity.ok(productRepository.save(product));
-	}
-
 
 	@GetMapping
 	public ResponseEntity<?> list(){
-		return ResponseEntity.ok(productRepository.findAll());
+		return ResponseEntity.ok(productService.getALl());
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getById(@PathVariable("id")Long id){
+		return ResponseEntity.ok(productService.getById(id));
+	}
+
+
+	@PostMapping
+	public ResponseEntity<?> create(@RequestBody ProductDTO product){
+		try{
+			if(productService.create(product.convertToProduct()) != null){
+				return ResponseEntity.ok(new JsonMessage("Produto criado com sucesso"));
+			}else{
+				return ResponseEntity.badRequest().body(new JsonMessage("Não foi possivel criar o produto "));
+			}
+		}catch (Exception e){
+			return ResponseEntity.badRequest().body(new JsonMessage(e.getMessage()));
+		}
 	}
 
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable("id") Long id){
-		Optional<Product> product = productRepository.findById(id);
 
-		if(product.isPresent()){
-			product.get().delete();
-			productRepository.save(product.get());
+		if(productService.deleteById(id)){
 			return ResponseEntity.ok(new JsonMessage("Produto excluido"));
+		}else{
+			return ResponseEntity.badRequest().body(new JsonMessage("Não foi possivel excluir o produto "));
 		}
-
-		return ResponseEntity.badRequest().body(new JsonMessage("Não foi possivel excluir o produto "));
 	}
 
 
 	@PutMapping
-	public ResponseEntity<?> update(@RequestBody Product product){
+	public ResponseEntity<?> update(@RequestBody ProductDTO product){
 
-		if(product != null){
-			if(product.getId() != null){
-				product.update();
-				productRepository.save(product);
-				return ResponseEntity.ok(new JsonMessage("Produto Atualizado"));
-			}
+		if(productService.update(product.convertToProduct()) != null){
+			return ResponseEntity.ok(new JsonMessage("Produto Atualizado"));
+		}else{
+			return ResponseEntity.badRequest().body(new JsonMessage("Não foi possivel atualizar o produto "));
 		}
-
-		return ResponseEntity.badRequest().body(new JsonMessage("Não foi possivel atualizar o produto "));
 	}
 
 }

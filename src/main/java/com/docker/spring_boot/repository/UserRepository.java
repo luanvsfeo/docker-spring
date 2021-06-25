@@ -1,13 +1,13 @@
 package com.docker.spring_boot.repository;
 
-import com.docker.spring_boot.domain.Customer;
+import com.docker.spring_boot.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer,Long> {
+public interface UserRepository extends JpaRepository<User,Long> {
 
 	boolean existsByEmail(String email);
 
-	Customer findByEmail(String email);
+	User findByEmail(String email);
 }

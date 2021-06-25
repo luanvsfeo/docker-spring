@@ -1,13 +1,16 @@
 package com.docker.spring_boot.domain;
 
+import com.docker.spring_boot.dto.UserDTO;
 import com.docker.spring_boot.util.ConversionUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Collections;
 
 @Entity
-public class Customer implements UserDetails {
+@Table(name = "users")
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +21,39 @@ public class Customer implements UserDetails {
 
 	private String password;
 
+	private boolean enabled = true;
 
-	public Customer() {
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+			name = "users_roles",
+			joinColumns = @JoinColumn(
+					name = "user_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(
+					name = "permission_id", referencedColumnName = "id"))
+	private Collection<Permission> roles;
+
+	public User() {
 	}
 
-	public Customer(Long id, String email, String password) {
-		this.id = id;
+	public User(String email, String password) {
 		this.email = email;
 		this.password = password;
 	}
 
+	public User(Long id, String email, String password, boolean enabled) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.enabled = enabled;
+	}
+
+	public User(Long id, String email, String password, boolean enabled, Collection<Permission> roles) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.enabled = enabled;
+		this.roles = roles;
+	}
 
 	public void changePassword() {
 		this.password = ConversionUtil.encode(this.password);
@@ -35,6 +61,15 @@ public class Customer implements UserDetails {
 
 	public boolean validForLogin(){
 		return this.password != null && this.email != null;
+	}
+
+	public void create(Permission permission){
+		this.setRoles(Collections.singleton(permission));
+		this.changePassword();
+	}
+
+	public UserDTO convertToDTO(){
+		return new UserDTO(this.email,this.password);
 	}
 
 
@@ -54,9 +89,21 @@ public class Customer implements UserDetails {
 		this.email = email;
 	}
 
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Collection<Permission> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<Permission> roles) {
+		this.roles = roles;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return this.roles;
 	}
 
 	public String getPassword() {

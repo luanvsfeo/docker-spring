@@ -1,14 +1,13 @@
 package com.docker.spring_boot.controller;
 
-import com.docker.spring_boot.domain.Customer;
+import com.docker.spring_boot.domain.User;
 import com.docker.spring_boot.domain.JsonMessage;
 import com.docker.spring_boot.domain.Order;
-import com.docker.spring_boot.repository.CustomerRepository;
+import com.docker.spring_boot.repository.UserRepository;
 import com.docker.spring_boot.repository.OrderRepository;
 import com.docker.spring_boot.util.JwtTokenUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
@@ -19,12 +18,12 @@ public class OrderController {
 
 	private final OrderRepository orderRepository;
 
-	private final CustomerRepository customerRepository;
+	private final UserRepository userRepository;
 
-	public OrderController(JwtTokenUtil jwtTokenUtil, OrderRepository orderRepository, CustomerRepository customerRepository) {
+	public OrderController(JwtTokenUtil jwtTokenUtil, OrderRepository orderRepository, UserRepository userRepository) {
 		this.jwtTokenUtil = jwtTokenUtil;
 		this.orderRepository = orderRepository;
-		this.customerRepository = customerRepository;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping
@@ -32,14 +31,14 @@ public class OrderController {
 
 		final String requestTokenHeader = request.getHeader("Authorization");
 
-		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
+		User user = userRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		if(orderRepository.existsByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer)){
+		if(orderRepository.existsByUserAndOrderDateIsNullAndDeleteDateIsNull(user)){
 			return ResponseEntity.badRequest().body(new JsonMessage("Não é possivel criar um novo pedido sem excluir ou finalizar o atual"));
 		}
 
 		order.createDraft();
-		order.setCustomer(customer);
+		order.setCustomer(user);
 
 		return ResponseEntity.ok(orderRepository.save(order));
 	}
@@ -48,22 +47,22 @@ public class OrderController {
 	public ResponseEntity<?> finish(HttpServletRequest request){
 		final String requestTokenHeader = request.getHeader("Authorization");
 
-		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
+		User user = userRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		Order order = orderRepository.findByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer);
+		Order order = orderRepository.findByUserAndOrderDateIsNullAndDeleteDateIsNull(user);
 		order.confirm();
 		orderRepository.save(order);
 
-		return ResponseEntity.ok(new JsonMessage(("Pedido confirmado")));
+		return ResponseEntity.ok(new JsonMessage(("Pedido criado com sucesso")));
 	}
 
 	@DeleteMapping
 	public ResponseEntity<?> delete(HttpServletRequest request){
 		final String requestTokenHeader = request.getHeader("Authorization");
 
-		Customer customer = customerRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
+		User user = userRepository.findByEmail(jwtTokenUtil.getUsernameFromToken(requestTokenHeader.substring(7)));
 
-		Order order = orderRepository.findByCustomerAndOrderDateIsNullAndDeleteDateIsNull(customer);
+		Order order = orderRepository.findByUserAndOrderDateIsNullAndDeleteDateIsNull(user);
 		order.delete();
 		orderRepository.save(order);
 

@@ -1,7 +1,6 @@
 package com.docker.spring_boot.domain;
 
 import com.docker.spring_boot.enumx.OrderStatus;
-
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -32,21 +31,26 @@ public class Order {
 	private Date deleteDate;
 
 	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
+	@JoinColumn(name = "user_id")
+	private User user;
 
 
 	public Order() {
 	}
 
-	public Order(Long id, List<Product> itens, Date orderDate, OrderStatus status, Double totalPrice, Date deleteDate, Customer customer) {
+	public Order(List<Product> itens, User user) {
+		this.itens = itens;
+		this.user = user;
+	}
+
+	public Order(Long id, List<Product> itens, Date orderDate, OrderStatus status, Double totalPrice, Date deleteDate, User user) {
 		this.id = id;
 		this.itens = itens;
 		this.orderDate = orderDate;
 		this.status = status;
 		this.totalPrice = totalPrice;
 		this.deleteDate = deleteDate;
-		this.customer = customer;
+		this.user = user;
 	}
 
 	public Long getId() {
@@ -81,12 +85,12 @@ public class Order {
 		this.totalPrice = totalPrice;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public User getCustomer() {
+		return user;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomer(User user) {
+		this.user = user;
 	}
 
 	public Date getDeleteDate() {

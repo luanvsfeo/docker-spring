@@ -1,5 +1,6 @@
 package com.docker.spring_boot.domain;
 
+import com.docker.spring_boot.dto.ProductDTO;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +25,16 @@ public class Product {
 	private Date deletedAt;
 
 	private Date updatedAt;
+
+	public Product(String name, String description, Double price) {
+		this.name = name;
+		this.description = description;
+		this.price = price;
+	}
+
+	public Product(Long id) {
+		this.id = id;
+	}
 
 	public Product(Long id, String name, String description, Double price, Date createdAt, Date deletedAt, Date updatedAt) {
 		this.id = id;
@@ -104,5 +115,9 @@ public class Product {
 
 	public void delete(){
 		this.deletedAt = new Date();
+	}
+
+	public ProductDTO convertToDTO(){
+		return new ProductDTO(this.name,this.description,this.price);
 	}
 }

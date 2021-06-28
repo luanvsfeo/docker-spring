@@ -12,7 +12,8 @@ Ter uma aplicação com Spring boot que rode em um container Docker e que se com
 - JWT 
 
 ## Consideração ao rodar o projeto
-Não se esqueça de alterar os arquivos de configuração (docker-compose e application-prod) com os seus respectivos dados de configuração para o banco de dados postgres
+- Não se esqueça de alterar os arquivos de configuração (docker-compose e application-prod) com os seus respectivos dados de configuração para o banco de dados postgres.
+- Para gerar o jar do projeto, é necessario ir ate o build.gradle e executar a função bootJar
 
 ## Comandos necessarios
 
@@ -32,5 +33,11 @@ docker run -p 8080:8080 spring-app
 - Projeto inteiro
 ```
 docker compose up -d
-
 ```
+
+## Endpoints
+
+| Url | Metodo| 
+|---|--------|
+| /user/login | POST |
+| /user/create | POST | 

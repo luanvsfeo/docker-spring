@@ -14,3 +14,23 @@ Ter uma aplicação com Spring boot que rode em um container Docker e que se com
 ## Consideração ao rodar o projeto
 Não se esqueça de alterar os arquivos de configuração (docker-compose e application-prod) com os seus respectivos dados de configuração para o banco de dados postgres
 
+## Comandos necessarios
+
+- Postgres separado
+```
+docker pull postgres
+
+docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+```
+- Api separada
+```
+docker build -t spring-app .
+
+docker run -p 8080:8080 spring-app
+```
+
+- Projeto inteiro
+```
+docker compose up -d
+
+```

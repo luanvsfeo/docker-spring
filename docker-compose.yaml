@@ -2,19 +2,25 @@ version: "3.7"
 services:
   db:
     image: postgres
-    container_name: some_postgres
+    container_name: db
     environment:
-      POSTGRES_PASSWORD: <********>
       POSTGRES_DB: teste
+      POSTGRES_HOST: 'db'
       POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     restart: always
     ports:
       - "5432:5432"
   api:
     build: "./"
     container_name: java-api
-    restart: always
     ports:
       - "8080:8080"
     depends_on:
       - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/teste
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: <********>
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_PROFILES_ACTIVE: prod

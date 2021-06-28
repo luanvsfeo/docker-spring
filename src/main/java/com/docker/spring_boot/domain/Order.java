@@ -1,7 +1,10 @@
 package com.docker.spring_boot.domain;
 
+import com.docker.spring_boot.dto.OrderDTO;
+import com.docker.spring_boot.dto.ProductDTO;
 import com.docker.spring_boot.enumx.OrderStatus;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -125,5 +128,15 @@ public class Order {
 		for(Product product : this.itens){
 			this.totalPrice += product.getPrice();
 		}
+	}
+
+	public OrderDTO convertToDTO(){
+		List<ProductDTO> productDTOS = new ArrayList<>();
+
+		for( Product product : this.itens){
+			productDTOS.add(product.convertToDTO());
+		}
+
+		return new OrderDTO(productDTOS);
 	}
 }

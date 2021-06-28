@@ -4,16 +4,28 @@ import com.docker.spring_boot.domain.Product;
 
 public class ProductDTO {
 
+	private Long id;
+
 	private String name;
 
 	private String description;
 
 	private Double price;
 
+	public ProductDTO(Long id, String name, String description, Double price) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.price = price;
+	}
+
 	public ProductDTO(String name, String description, Double price) {
 		this.name = name;
 		this.description = description;
 		this.price = price;
+	}
+
+	public ProductDTO() {
 	}
 
 	public String getName() {
@@ -41,6 +53,18 @@ public class ProductDTO {
 	}
 
 	public Product convertToProduct(){
-		return new Product(this.name,this.description,this.price);
+		if(this.id == null){
+			return new Product(this.name,this.description,this.price);
+		}else{
+			return new Product(this.id,this.name,this.description,this.price);
+		}
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

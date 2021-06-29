@@ -1,6 +1,5 @@
 package com.docker.spring_boot.dto;
 
-import com.docker.spring_boot.domain.Product;
 
 import java.util.List;
 
@@ -12,6 +11,9 @@ public class OrderDTO {
 
 	public OrderDTO(List<ProductDTO> itens) {
 		this.itens = itens;
+	}
+
+	public OrderDTO() {
 	}
 
 	public List<ProductDTO> getItens() {

@@ -14,6 +14,8 @@ public class UserDTO {
 		this.password = password;
 	}
 
+	public UserDTO() {
+	}
 
 	public boolean validForLogin(){
 		return this.password != null && this.email != null;

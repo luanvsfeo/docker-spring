@@ -31,9 +31,9 @@ public class UserService {
 		return !userRepository.existsByEmail(user.getEmail()) && user.getEmail() != null;
 	}
 
-	public User createUserCustomer(User user){
+	public void createUserCustomer(User user){
 		user.create(permissionRepository.findByName("CUSTOMER"));
-		return userRepository.save(user);
+		userRepository.save(user);
 	}
 
 	public String generateToken(User user){
@@ -50,7 +50,7 @@ public class UserService {
 
 
 	@EventListener(ApplicationReadyEvent.class)
-	public void createIfDbIsEmpty() {
+	private void createIfDbIsEmpty() {
 
 		if(userRepository.count() == 0){
 

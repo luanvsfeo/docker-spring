@@ -2,6 +2,8 @@ package com.docker.spring_boot.domain;
 
 import com.docker.spring_boot.dto.UserDTO;
 import com.docker.spring_boot.util.ConversionUtil;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
@@ -23,7 +25,8 @@ public class User implements UserDetails {
 
 	private boolean enabled = true;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@ManyToMany
 	@JoinTable(
 			name = "users_roles",
 			joinColumns = @JoinColumn(

@@ -9,6 +9,7 @@ import com.docker.spring_boot.repository.OrderRepository;
 import com.docker.spring_boot.service.ProductService;
 import com.docker.spring_boot.util.JwtTokenUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
@@ -45,8 +46,12 @@ public class OrderController {
 		order.createDraft();
 		order.setCustomer(user);
 
+		if(CollectionUtils.isEmpty(order.getItens())){
+			return ResponseEntity.badRequest().body(new JsonMessage("Pedido vazio"));
+		}
+
 		for(Product product:order.getItens()){
-			if(!productService.isAvaliable(product)){
+			if(!productService.isAvailable(product)){
 				return ResponseEntity.badRequest().body(new JsonMessage("Um ou mais produtos não estão disponiveis"));
 			}
 		}

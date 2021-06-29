@@ -55,7 +55,7 @@ public class ProductService {
 		return productRepository.findAllByDeletedAtIsNull();
 	}
 
-	public boolean isAvaliable(Product product){
+	public boolean isAvailable(Product product){
 		return productRepository.existsByIdAndDeletedAtIsNull(product.getId());
 	}
 

@@ -3,10 +3,14 @@ package com.docker.spring_boot.domain;
 import com.docker.spring_boot.dto.OrderDTO;
 import com.docker.spring_boot.dto.ProductDTO;
 import com.docker.spring_boot.enumx.OrderStatus;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "orders")
@@ -16,13 +20,14 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@LazyCollection(LazyCollectionOption.FALSE)
 	@ManyToMany
 	@JoinTable(
 			name = "order_product",
 			joinColumns = @JoinColumn(name = "order_id"),
 			inverseJoinColumns = @JoinColumn(name = "product_id")
 	)
-	private List<Product> itens;
+	private Set<Product> itens;
 
 	private Date orderDate;
 
@@ -41,12 +46,12 @@ public class Order {
 	public Order() {
 	}
 
-	public Order(List<Product> itens, User user) {
+	public Order(Set<Product> itens, User user) {
 		this.itens = itens;
 		this.user = user;
 	}
 
-	public Order(Long id, List<Product> itens, Date orderDate, OrderStatus status, Double totalPrice, Date deleteDate, User user) {
+	public Order(Long id, Set<Product> itens, Date orderDate, OrderStatus status, Double totalPrice, Date deleteDate, User user) {
 		this.id = id;
 		this.itens = itens;
 		this.orderDate = orderDate;
@@ -64,12 +69,24 @@ public class Order {
 		this.id = id;
 	}
 
-	public List<Product> getItens() {
+	public Set<Product> getItens() {
 		return itens;
 	}
 
-	public void setItens(List<Product> itens) {
+	public OrderStatus getStatus() {
+		return status;
+	}
+
+	public void setItens(Set<Product> itens) {
 		this.itens = itens;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public Date getOrderDate() {
